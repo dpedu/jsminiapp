@@ -2,14 +2,18 @@
 
 A barebones framework for quick & tiny javascript/python apps.
 
-## Using:
+## Requirements
 
-* Cherrypy
-* Jinja2 server-side templates
-* Handlebars client-side templates
-* Bootstrap theme
+* Python 3.2
+* CherryPy3
+* Jinja2
+
+## Included Libraries:
+
+* Handlebars for client-side templates
+* Bootstrap 3 theme
 * Handlebar Helpers: https://github.com/danharper/Handlebars-Helpers
 
-## TODO
+### TODO
 
 * Add more info in README.md
