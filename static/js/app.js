@@ -53,22 +53,52 @@ function done() {
 $(window).bind('hashchange', function(e) {
 	HASH = getHash();
 	if(HASH == null) {
-		HASH="index" // Default view
+		HASH="scheduleList" // Default view
 	}
 	wipe();
-	// Call up this hash's behavior
-	if(behaviors[HASH]) {
-		behaviors[HASH]()
-	} else {
+	
+	// Find and call this hash's behavior
+	behavior = getBehavior(HASH)
+	if(!behavior) {
 		behaviors["error"]("Unknown view!")
-		hash="_error"
+	} else {
+		behavior.method(behavior.args)
 	}
 	
+	// Fire page change event
 	if(ui["_pageChange"]) {
 		ui["_pageChange"](HASH)
 	}
 	
 })
+function getBehavior(HASH) {
+	HASH = HASH.split("/")
+	// Search for a behavior matching this hash's path
+	depth = HASH.length
+	// Search progressively less of the hash, trying params as arguments instead until one is found
+	while(depth > 0) {
+		section = behaviors
+		testParts = HASH.slice(0, depth)
+		for(i in testParts) {
+			section = section[testParts[i]]
+			if(section == null) {
+				break
+			}
+		}
+		if(typeof section == "function") {
+			break
+		} else if(typeof section == "object") {
+			section = section["index"]
+			break
+		}
+		depth--;
+	}
+	if(section == null) {
+		return null
+	}
+	return {method:section,args:HASH.splice(depth)}
+	// #mypage/subpage/arg1/arg2 etc will be mapped to behaviors.mypage.subpage([arg1,arg2]) or behaviors.mypage.subpage.index([arg1,arg2])
+}
 
 var behaviors = {
 	error:function(message) {
